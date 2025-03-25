@@ -1,0 +1,6 @@
+# python enviroment
+venv
+.venv
+__pycache__
+*.db
+__init__.py
