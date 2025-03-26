@@ -109,6 +109,7 @@ summit_digest/
 - Micro Service orchestration (FastAPI Non-monolithic backend, MySQL, Redis)
 - Parallelize insight extraction.
 - AI generated title and sub-title when digest is finished.
+- Use long context model (eg. Gemini 2 Flash) and pass all the files with the ingishts to provide better summary 
 - Serve and reference uploaded files.
 - Fenix brand styling.
 - Support for more file types (DOC, PPT, etc.)
