@@ -1,5 +1,5 @@
 # Submission of `Project 1`
-
+HOSTED RIGHT NOW AT [https://summitdigest-production.up.railway.app](https://summitdigest-production.up.railway.app/)
 ## Overview
 Summit Digest is a platform where members of Fenix can access to handle all the data points they collected during a sumimt / conference.
 
