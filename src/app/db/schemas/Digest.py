@@ -19,4 +19,4 @@ class DigestResponse(DigestBase):
 
     class Config:
         orm_mode = True
-        from_attributes = True  # For newer Pydantic versions
+        from_attributes = True
