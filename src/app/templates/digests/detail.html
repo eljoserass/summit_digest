@@ -1,0 +1,123 @@
+{% extends "base.html" %} {% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ digest.title or 'Digest Details' }}</h1>
+    <a href="/digests" class="btn btn-outline-primary">Back to All Digests</a>
+    <a
+        href="/digests/{{ digest.id }}/delete"
+        class="btn btn-outline-danger ms-2"
+        >Delete Digest</a
+    >
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Digest #{{ digest.id }}</h5>
+            <span
+                class="badge {% if digest.status == 'completed' %}bg-success{% elif digest.status == 'processing' %}bg-warning{% elif digest.status == 'failed' %}bg-danger{% else %}bg-secondary{% endif %}"
+            >
+                {{ digest.status|title }}
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if digest.status == 'processing' %}
+        <div class="mb-4">
+            <h5>Processing Status</h5>
+            <div class="progress" style="height: 20px">
+                <div
+                    id="progress-bar"
+                    class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar"
+                    style="width: {{ (digest.processed_files / digest.total_files * 100) if digest.total_files > 0 else 0 }}%;"
+                    aria-valuenow="{{ digest.processed_files }}"
+                    aria-valuemin="0"
+                    aria-valuemax="{{ digest.total_files }}"
+                >
+                    {{ digest.processed_files }}/{{ digest.total_files }} files
+                </div>
+            </div>
+            <p class="mt-2">
+                Processing files... this may take several minutes.
+            </p>
+        </div>
+        {% endif %} {% if digest.resolution_summary %}
+        <h5>Resolution Summary</h5>
+        <div class="mb-4">
+            <div class="markdown-content">
+                {{ digest.resolution_summary|markdown|safe }}
+            </div>
+        </div>
+        {% endif %} {% if digest.insights %}
+        <h5>File Insights</h5>
+        <div class="accordion" id="insightsAccordion">
+            {% for filename, insight in digest.insights.items() %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ loop.index }}"
+                        aria-expanded="false"
+                        aria-controls="collapse{{ loop.index }}"
+                    >
+                        {{ filename }}
+                    </button>
+                </h2>
+                <div
+                    id="collapse{{ loop.index }}"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="heading{{ loop.index }}"
+                    data-bs-parent="#insightsAccordion"
+                >
+                    <div class="accordion-body markdown-content">
+                        {{ insight|markdown|safe }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %} {% if digest.status == 'processing' %}
+        <script>
+            // Function to update progress
+            function updateProgress() {
+                fetch("/digests/{{ digest.id }}/status")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.status === "processing") {
+                            // Update progress bar
+                            const progressBar =
+                                document.getElementById("progress-bar");
+                            progressBar.style.width = data.progress + "%";
+                            progressBar.setAttribute(
+                                "aria-valuenow",
+                                data.processed_files,
+                            );
+                            progressBar.textContent = `${data.processed_files}/${data.total_files} files`;
+
+                            // Continue polling
+                            setTimeout(updateProgress, 5000);
+                        } else if (
+                            data.status === "completed" ||
+                            data.status === "failed"
+                        ) {
+                            // Refresh the page to show the final result
+                            window.location.reload();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        // Try again after a delay
+                        setTimeout(updateProgress, 10000);
+                    });
+            }
+
+            // Start polling when the page loads
+            document.addEventListener("DOMContentLoaded", function () {
+                updateProgress();
+            });
+        </script>
+        {% endif %} {% endblock %}
+    </div>
+</div>

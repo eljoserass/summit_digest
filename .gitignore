@@ -1,0 +1,10 @@
+# python enviroment
+venv
+.venv
+__pycache__
+*.db
+__init__.py
+extracts
+uploads
+.env
+.ropeproject

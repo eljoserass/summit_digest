@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to Summit Digest</h1>
+    <p class="lead">Create and manage your digests in one place.</p>
+    <hr class="my-4" />
+    <p>Get started by creating an account or logging in.</p>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary btn-lg" href="/register" role="button"
+            >Register</a
+        >
+        <a class="btn btn-outline-primary btn-lg" href="/login" role="button"
+            >Login</a
+        >
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Create Digests</h5>
+                <p class="card-text">
+                    Create and manage your digests for your summi from a single
+                    .zip.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Track insights</h5>
+                <p class="card-text">
+                    Keep track of the information and media from all of your
+                    conferences.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Power of data</h5>
+                <p class="card-text">
+                    Easily consume all the relevant details from your attendance
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

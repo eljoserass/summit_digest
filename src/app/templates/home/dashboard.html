@@ -1,0 +1,74 @@
+{% extends "base.html" %} {% block content %}
+<h1>Dashboard</h1>
+<p>Welcome to your dashboard, {{ user.username }}!</p>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Your Digests</h5>
+            </div>
+            <div class="card-body">
+                {% if digests %}
+                <div class="list-group">
+                    {% for digest in digests %}
+                    <a
+                        href="/digests/{{ digest.id }}"
+                        class="list-group-item list-group-item-action"
+                    >
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Digest #{{ digest.id }}</h5>
+                            <small
+                                >{{ digest.created_at.strftime('%Y-%m-%d')
+                                }}</small
+                            >
+                        </div>
+                        <p class="mb-1">
+                            {% if digest.resolution_summary %} {{
+                            digest.resolution_summary[:100] + '...' if
+                            digest.resolution_summary|length > 100 else
+                            digest.resolution_summary }} {% else %} {% if
+                            digest.status == 'processing' %} Processing in
+                            progress... {% elif digest.status == 'pending' %}
+                            Waiting to be processed... {% else %} No summary
+                            available {% endif %} {% endif %}
+                        </p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>
+                    You don't have any digests yet.
+                    <a href="/digests/new">Create one</a>!
+                </p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="/digests" class="btn btn-primary">View All Digests</a>
+                <a href="/digests/new" class="btn btn-success"
+                    >Create New Digest</a
+                >
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Account Info</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p>
+                    <strong>Email:</strong> {{ user.email or 'Not provided' }}
+                </p>
+                <p>
+                    <strong>Joined:</strong> {{
+                    user.created_at.strftime('%Y-%m-%d') }}
+                </p>
+                <p><strong>Total Digests:</strong> {{ digests|length }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

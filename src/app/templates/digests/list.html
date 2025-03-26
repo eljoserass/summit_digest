@@ -1,0 +1,72 @@
+{% extends "base.html" %} {% block content %}
+<h1>My Digests</h1>
+
+<div class="mb-4">
+    <a href="/digests/new" class="btn btn-primary">Create New Digest</a>
+</div>
+
+{% if digests %}
+<div class="row">
+    {% for digest in digests %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="mb-0">
+                    {% if digest.title %} {{ digest.title }} {% else %} Digest
+                    #{{ digest.id }} {% endif %}
+                </h5>
+                <span
+                    class="badge {% if digest.status == 'completed' %}bg-success{% elif digest.status == 'processing' %}bg-warning{% elif digest.status == 'failed' %}bg-danger{% else %}bg-secondary{% endif %}"
+                >
+                    {{ digest.status|title }}
+                </span>
+            </div>
+            <div class="card-body">
+                {% if digest.media_path and digest.media_path.endswith('.zip')
+                == False %}
+                <img
+                    src="{{ digest.media_path }}"
+                    class="img-fluid mb-3"
+                    alt="Digest media"
+                />
+                {% endif %} {% if digest.resolution_summary %}
+                <p>
+                    {{ digest.resolution_summary[:100] + '...' if
+                    digest.resolution_summary|length > 100 else
+                    digest.resolution_summary }}
+                </p>
+                {% else %} {% if digest.status == 'processing' %}
+                <p>
+                    Processing in progress... ({{ digest.processed_files }}/{{
+                    digest.total_files }} files)
+                </p>
+                {% elif digest.status == 'pending' %}
+                <p>Waiting to be processed...</p>
+                {% else %}
+                <p>No summary available</p>
+                {% endif %} {% endif %}
+            </div>
+            <div class="card-footer">
+                <a
+                    href="/digests/{{ digest.id }}"
+                    class="btn btn-sm btn-outline-primary"
+                    >View Details</a
+                >
+                <a
+                    href="/digests/{{ digest.id }}/delete"
+                    class="btn btn-sm btn-outline-danger"
+                    >Delete</a
+                >
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <p>
+        You don't have any digests yet.
+        <a href="/digests/new">Create your first digest</a>!
+    </p>
+</div>
+{% endif %} {% endblock %}
