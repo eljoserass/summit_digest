@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request, Depends, HTTPException, Form, UploadFile, File, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import BackgroundTasks
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from sqlalchemy.orm import Session
@@ -215,6 +216,40 @@ async def delete_digest(
     except HTTPException:
         logger.info("User not authenticated, redirecting to login")
         return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+
+@router.get("/digests/{digest_id}/status", response_class=JSONResponse)
+async def get_digest_status(
+    request: Request,
+    digest_id: int,
+    db: Session = Depends(get_db)
+):
+    try:
+        current_user = await get_current_user_from_cookie(request, db)
+        digest = db.query(Digest).filter(
+            Digest.id == digest_id,
+            Digest.user_id == current_user.id
+        ).first()
+
+        if not digest:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Digest not found"}
+            )
+
+        # Return the current status and progress information
+        return {
+            "status": digest.status,
+            "processed_files": digest.processed_files,
+            "total_files": digest.total_files,
+            "progress": (digest.processed_files / digest.total_files * 100) if digest.total_files > 0 else 0
+        }
+    except HTTPException:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Not authenticated"}
+        )
+
+
 
 @router.post("/digests/upload", response_class=HTMLResponse)
 async def upload_digest(
