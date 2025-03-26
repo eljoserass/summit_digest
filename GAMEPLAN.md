@@ -26,3 +26,12 @@ build an app that userrs can register and login on. once logged in, users will s
 - Backend and Frontend: FastAPI + Jinja Templating
 - Database: MySQL / SQLite
 - Models: OpenAI, potentially using gemini-2-flash for long context
+
+
+# TODO
+- fix blocking issue
+- potentially parallelize insight extraction
+- store generate title
+- store generated summary of the summary (a bit meta indeed) to fit in the digest box
+- style to fenix brand
+- link and serve media referenced in the insight
